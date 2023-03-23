@@ -4,19 +4,23 @@ import {
   withStreamlitConnection
 } from "streamlit-component-lib"
 import React, { useEffect, useState } from "react"
+import './index.css'
 
 import ReactPlayer from "react-player"
 import HeightObserver from "./height-observer"
 
 const StreamlitPlayer = ({ args }: ComponentProps) => {
   const [playerEvents, setPlayerEvents] = useState({})
-  const [tracker, setTracker] = useState(0)
-  let segments = args.timestamps
   let player: any
+  let scroll: any
 
   function ref(playerInstance: any) {
     player = playerInstance;
   }
+  function scroll_ref(scrollInstance: any) {
+    scroll = scrollInstance;
+  }
+
 
   // Handle events
   useEffect(() => {
@@ -34,12 +38,22 @@ const StreamlitPlayer = ({ args }: ComponentProps) => {
     setPlayerEvents(events)
   }, [args.events])
 
-  function time() {
+  function seek(time:string) {
     // const currentTime = player.getCurrentTime();
-    player.seekTo(segments[tracker], 'seconds')
-    setTracker(tracker + 1)
-    if (tracker == segments.length - 1)
-      setTracker(0)
+    var t = time.split(':')
+    var min = +t[0] 
+    var sec = +t[1]
+    var total = (min * 60) + sec
+
+    
+    player.seekTo(total, 'seconds')
+  }
+
+  function scroll_div(positive: boolean){
+    if (positive)
+      scroll.scrollLeft += 500
+    else
+      scroll.scrollLeft -= 500
   }
 
   return (
@@ -61,9 +75,23 @@ const StreamlitPlayer = ({ args }: ComponentProps) => {
         config={args.config || undefined}
         {...playerEvents}
       />
-      <button onClick={time}>foward</button>
+      <div className="container"> 
+      <a className="highlights">highlights</a>
+      <button onClick={() => scroll_div(false)} className={"left"}>&lt;</button>  
+        <div className="scroll" ref={scroll_ref}>
+            {args.timestamps.map((time : string) => (
+            <button onClick={() => seek(time)} className={"btn"}>    {time}    </button>
+            ))}
+        </div>
+        
+      <button onClick={() => scroll_div(true)} className={"right"}>&gt;</button> 
+      </div>
     </HeightObserver>
   )
 }
+
+
+
+
 
 export default withStreamlitConnection(StreamlitPlayer)
