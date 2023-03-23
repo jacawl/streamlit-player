@@ -17,7 +17,6 @@ _SUPPORTED_EVENTS = [
 
 _PlayerEvent = namedtuple("PlayerEvent", ["name", "data"])
 
-
 def st_player(
     url,
     height=None,
@@ -28,11 +27,12 @@ def st_player(
     volume=None,
     muted=None,
     playback_rate=None,
-    progress_interval=None,
+    progress_interval=1000,
     play_inline=None,
     events=None,
     config=None,
-    key=None
+    key=None,
+    timestamps=None
 ):
     """Embed a video or music player.
     
@@ -84,18 +84,19 @@ def st_player(
     event = _component_func(
         url=url, 
         height=height,
-        playing=playing,
+        playing='true',
         loop=loop,
         controls=controls,
         light=light,
         volume=volume,
-        muted=muted,
+        muted='true',
         playbackRate=playback_rate,
         progressInterval=progress_interval,
         playInline=play_inline,
-        events=events,
+        events=['onProgress'],
         config=config,
         key=key,
+        timestamps=timestamps,
         default={}
     )
 
