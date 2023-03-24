@@ -11,6 +11,7 @@ import HeightObserver from "./height-observer"
 
 const StreamlitPlayer = ({ args }: ComponentProps) => {
   const [playerEvents, setPlayerEvents] = useState({})
+  const [value, setValue] = useState(0);
   let player: any
   let scroll: any
 
@@ -39,10 +40,12 @@ const StreamlitPlayer = ({ args }: ComponentProps) => {
   }, [args.events])
 
   function seek(time:string) {
+    
     // const currentTime = player.getCurrentTime();
     var t = time.split(':')
     var min = +t[0] 
     var sec = +t[1]
+    setValue(sec)
     var total = (min * 60) + sec
 
     
@@ -54,6 +57,10 @@ const StreamlitPlayer = ({ args }: ComponentProps) => {
       scroll.scrollLeft += 500
     else
       scroll.scrollLeft -= 500
+  }
+
+  function set_value(){
+    Streamlit.setComponentValue(player)
   }
 
   return (
@@ -73,6 +80,7 @@ const StreamlitPlayer = ({ args }: ComponentProps) => {
         progressInterval={args.progressInterval}
         playsinline={args.playInline || undefined}
         config={args.config || undefined}
+        onProgress={set_value}
         {...playerEvents}
       />
       <div className="container"> 

@@ -100,4 +100,4 @@ def st_player(
         default={}
     )
 
-    return _PlayerEvent(event.get("name", None), event.get("data", None))
+    return event
